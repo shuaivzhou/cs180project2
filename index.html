@@ -1,0 +1,699 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>CS180 Project 2: Filters and Frequencies</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 237, 214, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 237, 214, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(249, 228, 188, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="3cf22d65-63a3-4f28-9092-aaf3b2e368d3" class="page sans"><header><img class="page-cover-image" src="starcraft_battlecruiser_2.0_sharpened_result.png" style="object-position:center 36.419999999999995%"/><h1 class="page-title">CS180 Project 2: Filters and Frequencies</h1><p class="page-description"></p></header><div class="page-body"><p id="3f06c9a5-7ff9-4078-be9c-f010bbed5c35" class="">Name: Shuai Victor Zhou</p><p id="fc9b4ba5-d901-4649-8c3a-cb3c2cc64253" class="">SID: 3035912996</p><hr id="31150688-f0b9-4c5b-ba0c-57f7dd2a4506"/><h2 id="81a91b77-6c37-4527-b847-b1c04a17a626" class="">Overview</h2><p id="10c412c2-dbbd-807d-b0c4-fe987a58f885" class="">In this project, we first utilize filters and frequencies to adjust our images. With filters, we can create outlines of photos by highlighting the edges. Next, by playing around with frequencies and using low-pass and high-pass filters, we can generate sharper images, hybrid images, or even blended images.</p><hr id="852dddc1-5df6-403e-adf6-eb7f7e1f075f"/><h2 id="5396045c-0623-4a50-a844-980b585d5925" class="">Finite Difference Operators</h2><p id="10c412c2-dbbd-80c3-bf0a-fd43b3887fdd" class="">We define the following two operators:</p><figure id="10c412c2-dbbd-80f5-be9e-e014bc5cbb7f" class="equation"><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>D</mi><mi>x</mi></msub><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo>−</mo><mn>1</mn></mrow></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo separator="true">,</mo><msub><mi>D</mi><mi>y</mi></msub><mo>=</mo><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo>−</mo><mn>1</mn></mrow></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">D_x = \begin{bmatrix}
+1 &amp; -1
+\end{bmatrix}, D_y = \begin{bmatrix}
+1 \\
+-1
+\end{bmatrix},</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size1">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">−</span><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size1">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">−</span><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span></span></span></span></span></div></figure><p id="10c412c2-dbbd-8080-95a8-ee6ffa764822" class="">with <em>D_x</em> calculating our photo’s “rate of change” (in terms of pixel values) in the <em>x</em> direction, and <em>D_y</em> calculating the rate of change in the <em>y</em> direction. By convolving our images with these two kernels, we’re able to identify vertical and horizontal edges. Next, we combine these two gradients by taking the L2 norm, or</p><figure id="10c412c2-dbbd-8093-abe2-d33ca8dcc6c2" class="equation"><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msqrt><mrow><mi>i</mi><mi>m</mi><mi>a</mi><mi>g</mi><msubsup><mi>e</mi><mrow><mi>d</mi><mi>x</mi></mrow><mn>2</mn></msubsup><mo>+</mo><mi>i</mi><mi>m</mi><mi>a</mi><mi>g</mi><msubsup><mi>e</mi><mrow><mi>d</mi><mi>y</mi></mrow><mn>2</mn></msubsup></mrow></msqrt><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\sqrt{image_{dx}^2 + image_{dy}^2}.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.84em;vertical-align:-0.6269em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2131em;"><span class="svg-align" style="top:-3.8em;"><span class="pstrut" style="height:3.8em;"></span><span class="mord" style="padding-left:1em;"><span class="mord mathnormal">ima</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7959em;"><span style="top:-2.3987em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">x</span></span></span></span><span style="top:-3.0448em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3013em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">ima</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7959em;"><span style="top:-2.3987em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span style="top:-3.0448em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4374em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.1731em;"><span class="pstrut" style="height:3.8em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.88em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='1.88em' viewBox='0 0 400000 1944' preserveAspectRatio='xMinYMin slice'><path d='M983 90
+l0 -0
+c4,-6.7,10,-10,18,-10 H400000v40
+H1013.1s-83.4,268,-264.1,840c-180.7,572,-277,876.3,-289,913c-4.7,4.7,-12.7,7,-24,7
+s-12,0,-12,0c-1.3,-3.3,-3.7,-11.7,-7,-25c-35.3,-125.3,-106.7,-373.3,-214,-744
+c-10,12,-21,25,-33,39s-32,39,-32,39c-6,-5.3,-15,-14,-27,-26s25,-30,25,-30
+c26.7,-32.7,52,-63,76,-91s52,-60,52,-60s208,722,208,722
+c56,-175.3,126.3,-397.3,211,-666c84.7,-268.7,153.8,-488.2,207.5,-658.5
+c53.7,-170.3,84.5,-266.8,92.5,-289.5z
+M1001 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.6269em;"><span></span></span></span></span></span><span class="mord">.</span></span></span></span></span></div></figure><p id="10c412c2-dbbd-808d-a17a-cb203d0ffb79" class="">Finally, we can binarize the L2 norm by normalizing the image (mapping all pixel values to be in the range [0, 1] and then binarizing the image (mapping all values below a threshold to 0 and the others to 1).</p><figure id="10c412c2-dbbd-806b-a665-c77f6f1d0942" class="image"><a href="cameraman.png"><img style="width:336px" src="cameraman.png"/></a><figcaption>Original photo</figcaption></figure><div id="10c412c2-dbbd-80b3-bc4f-e77a1687ea46" class="column-list"><div id="10c412c2-dbbd-80ab-accc-fce853c3cd56" style="width:50%" class="column"><figure id="10c412c2-dbbd-80aa-8107-d022aefe59dc" class="image"><a href="cameraman_X_result.png"><img style="width:330.984375px" src="cameraman_X_result.png"/></a><figcaption><em>Dx</em></figcaption></figure><figure id="10c412c2-dbbd-8089-bc83-d12232ad3059" class="image"><a href="cameraman_Mag_Grad_result.png"><img style="width:330.984375px" src="cameraman_Mag_Grad_result.png"/></a><figcaption>Gradients combined</figcaption></figure></div><div id="10c412c2-dbbd-8043-838a-db373bbd6e85" style="width:50%" class="column"><figure id="10c412c2-dbbd-80f4-9f58-e7ce117fe011" class="image"><a href="cameraman_Y_result.png"><img style="width:330.984375px" src="cameraman_Y_result.png"/></a><figcaption><em>Dy</em></figcaption></figure><figure id="10c412c2-dbbd-80c5-90cd-d54ee0fa06aa" class="image"><a href="cameraman_Binarize_result.png"><img style="width:330.984375px" src="cameraman_Binarize_result.png"/></a><figcaption>Binarized</figcaption></figure></div></div><hr id="10c412c2-dbbd-80de-bcb4-c8792d5affb6"/><h2 id="10c412c2-dbbd-80cd-a12c-d34f3fa43094" class="">Derivative of Gaussian (DoG) Filter</h2><p id="10c412c2-dbbd-8049-9e39-e772f63b4e51" class="">We notice the noise in the results when we directly convolve our image with the kernels, and so this time, we first convolve the image with a Gaussian filter before repeating the steps in the previous part. This convolving with a Gaussian filter effectively blurs our image without affecting the sum of its pixel values, allowing us to preserve the image.</p><div id="10c412c2-dbbd-8047-98b3-fc2c9c888883" class="column-list"><div id="10c412c2-dbbd-80b7-b2b2-f7c45075448d" style="width:50%" class="column"><figure id="10c412c2-dbbd-80a2-affb-c8309c977960" class="image"><a href="cameraman_blurred_X_result.png"><img style="width:330.984375px" src="cameraman_blurred_X_result.png"/></a><figcaption><em>Dx</em></figcaption></figure><figure id="10c412c2-dbbd-8098-986a-c098f662f09a" class="image"><a href="cameraman_Mag_Grad_result%201.png"><img style="width:330.984375px" src="cameraman_Mag_Grad_result%201.png"/></a><figcaption>Gradients combined</figcaption></figure></div><div id="10c412c2-dbbd-809d-8f29-e1298665bb78" style="width:50%" class="column"><figure id="10c412c2-dbbd-80d7-ada7-f9634f8b03dc" class="image"><a href="cameraman_blurred_Y_result.png"><img style="width:330.984375px" src="cameraman_blurred_Y_result.png"/></a><figcaption><em>Dy</em></figcaption></figure><figure id="10c412c2-dbbd-80d7-b32b-c1a3f9ca6889" class="image"><a href="cameraman_blurred_Binarize_result.png"><img style="width:330.984375px" src="cameraman_blurred_Binarize_result.png"/></a><figcaption>Binarized</figcaption></figure></div></div><p id="10d412c2-dbbd-80cf-8cb3-cb5d7ee44abc" class="">Not only does this resulting binarized image have less noise than our previous result, but it’s also more smoothed out with less jagged parts to it. This can be attributed to the blurring on the image smoothing things out for us.</p><p id="10c412c2-dbbd-8093-a53a-c3bbbee52b7b" class="">We can also convolve our Gaussian filter itself first with <em>D_x</em> and <em>D_y</em> before convolving the image with both results.</p><div id="10c412c2-dbbd-8033-a475-d22cf626f000" class="column-list"><div id="10c412c2-dbbd-8083-b472-c2e755844609" style="width:50%" class="column"><figure id="10c412c2-dbbd-80ab-956a-f5dc62030984" class="image"><a href="cameraman_blurred_DoG_X_result.png"><img style="width:330.984375px" src="cameraman_blurred_DoG_X_result.png"/></a><figcaption><em>Dx</em></figcaption></figure><figure id="10c412c2-dbbd-806a-851b-cdf8650d63a2" class="image"><a href="cameraman_blurred_DoG_Mag_Grad_result.png"><img style="width:330.984375px" src="cameraman_blurred_DoG_Mag_Grad_result.png"/></a><figcaption>Gradients combined</figcaption></figure></div><div id="10c412c2-dbbd-80b2-81da-f79b3268783d" style="width:50%" class="column"><figure id="10c412c2-dbbd-8083-b3d9-c533faf9344d" class="image"><a href="cameraman_blurred_DoG_Y_result.png"><img style="width:330.984375px" src="cameraman_blurred_DoG_Y_result.png"/></a><figcaption><em>Dy</em></figcaption></figure><figure id="10c412c2-dbbd-8041-8c10-c33a1daec8d7" class="image"><a href="cameraman_blurred_DoG_Binarize_result.png"><img style="width:330.984375px" src="cameraman_blurred_DoG_Binarize_result.png"/></a><figcaption>Binarized</figcaption></figure></div></div><p id="10c412c2-dbbd-80e1-ab9a-c179b485eec3" class="">Comparing the two binarized results here, the images seem more or less the same, though the second one has a little more noise (still less than our original result). This may be due to more operations being done, resulting in greater exponential growth of our noise.</p><hr id="10c412c2-dbbd-80a9-80a3-e6795e06e7cb"/><h2 id="10c412c2-dbbd-808a-8734-e5d5de621016" class="">Image “Sharpening”</h2><p id="10c412c2-dbbd-80a7-af96-d839ae44a7bc" class="">The Gaussian filter we described in the previous part can also act as a low-pass filter. This means we can attain the high frequencies of an image by subtracting the low-passed image from the original image, or</p><figure id="10c412c2-dbbd-8090-82f6-d6c726b7d7ef" class="equation"><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mtext>Img</mtext><mtext>High-pass</mtext></msub><mo>=</mo><mtext>Img</mtext><mo>−</mo><msub><mtext>Img</mtext><mtext>Low-pass</mtext></msub><mspace linebreak="newline"></mspace><mo>=</mo><mtext>Img</mtext><mo>−</mo><mtext>Gaussian</mtext><mo stretchy="false">(</mo><mtext>Img</mtext><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\text{Img}_{\text{High-pass}} = \text{Img} - \text{Img}_{\text{Low-pass}} \newline = \text{Img} - \text{Gaussian}(\text{Img}).</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0636em;vertical-align:-0.3802em;"></span><span class="mord"><span class="mord text"><span class="mord">Img</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.242em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">High-pass</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3802em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Img</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0636em;vertical-align:-0.3802em;"></span><span class="mord"><span class="mord text"><span class="mord">Img</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Low-pass</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3802em;"><span></span></span></span></span></span></span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Img</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Gaussian</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">Img</span></span><span class="mclose">)</span><span class="mord">.</span></span></span></span></span></div></figure><p id="10c412c2-dbbd-8071-9725-db90aedc2e8f" class="">By adding our high frequencies times some alpha back to our original image, we can make our images seem “sharpened.”</p><figure id="10c412c2-dbbd-800e-8035-cd36173bf6da" class="equation"><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mtext>Img</mtext><mtext>Sharpened</mtext></msub><mo>=</mo><mtext>Img</mtext><mo>+</mo><mi>α</mi><mo>⋅</mo><msub><mtext>Img</mtext><mtext>High-pass</mtext></msub></mrow><annotation encoding="application/x-tex">\text{Img}_{\text{Sharpened}} = \text{Img} + \alpha \cdot \text{Img}_{\text{High-pass}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0636em;vertical-align:-0.3802em;"></span><span class="mord"><span class="mord text"><span class="mord">Img</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.242em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Sharpened</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3802em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Img</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4445em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0636em;vertical-align:-0.3802em;"></span><span class="mord"><span class="mord text"><span class="mord">Img</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.242em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">High-pass</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3802em;"><span></span></span></span></span></span></span></span></span></span></span></div></figure><div id="10c412c2-dbbd-8078-a544-f1e1a5526733" class="column-list"><div id="10c412c2-dbbd-800a-b739-d35586808768" style="width:50%" class="column"><figure id="10c412c2-dbbd-803a-a9e3-f56bf35949ef" class="image"><a href="taj.jpg"><img style="width:300px" src="taj.jpg"/></a><figcaption>Original photo</figcaption></figure><figure id="10c412c2-dbbd-801a-89eb-e54d5e7f968f" class="image"><a href="taj_0.75_sharpened_result.png"><img style="width:300px" src="taj_0.75_sharpened_result.png"/></a><figcaption>α = 0.75</figcaption></figure><figure id="10c412c2-dbbd-80d2-b663-cbf8c07b6ff4" class="image"><a href="taj_2.0_sharpened_result.png"><img style="width:300px" src="taj_2.0_sharpened_result.png"/></a><figcaption>α = 2.0</figcaption></figure></div><div id="10c412c2-dbbd-8087-8b89-f23e448ca60b" style="width:50%" class="column"><figure id="10c412c2-dbbd-80aa-9ebf-f6dc216e3cfb" class="image"><a href="taj_0.5_sharpened_result.png"><img style="width:300px" src="taj_0.5_sharpened_result.png"/></a><figcaption>α = 0.5</figcaption></figure><figure id="10c412c2-dbbd-803f-99ad-f2da4b64b61b" class="image"><a href="taj_1.0_sharpened_result.png"><img style="width:300px" src="taj_1.0_sharpened_result.png"/></a><figcaption>α = 1.0</figcaption></figure><figure id="10c412c2-dbbd-807c-bd65-c387abe5bfdf" class="image"><a href="taj_5.0_sharpened_result.png"><img style="width:300px" src="taj_5.0_sharpened_result.png"/></a><figcaption>α = 5.0</figcaption></figure></div></div><p id="10c412c2-dbbd-801e-837d-c48abe3bc986" class="">
+</p><div id="10c412c2-dbbd-8060-946d-c1235cab31d8" class="column-list"><div id="9d355f69-9335-4cb7-bb4d-1b5417bea651" style="width:50%" class="column"><figure id="2fdcfa00-8802-460b-b36c-4078d2e73764" class="image"><a href="wukong_fighting.jpg"><img style="width:2400px" src="wukong_fighting.jpg"/></a><figcaption>Original photo</figcaption></figure><figure id="9870c8d5-8d05-4294-a4fb-074be86e55e5" class="image"><a href="wukong_fighting_0.75_sharpened_result.png"><img style="width:2400px" src="wukong_fighting_0.75_sharpened_result.png"/></a><figcaption>α = 0.75</figcaption></figure><figure id="70e96c6b-da96-4d8a-8526-7b4cff034148" class="image"><a href="wukong_fighting_2.0_sharpened_result.png"><img style="width:2400px" src="wukong_fighting_2.0_sharpened_result.png"/></a><figcaption>α = 2.0</figcaption></figure></div><div id="cc341d8e-6434-4b57-a34d-9aeb83ca5ce6" style="width:50%" class="column"><figure id="74f3c033-d75a-44df-b0a9-9b67628ce0c3" class="image"><a href="wukong_fighting_0.5_sharpened_result.png"><img style="width:2400px" src="wukong_fighting_0.5_sharpened_result.png"/></a><figcaption>α = 0.5</figcaption></figure><figure id="5f5fde8f-ed78-4d2a-8306-b58722495995" class="image"><a href="wukong_fighting_1.0_sharpened_result.png"><img style="width:2400px" src="wukong_fighting_1.0_sharpened_result.png"/></a><figcaption>α = 1.0</figcaption></figure><figure id="e70cc721-7d9d-48cf-8295-217fcf83a173" class="image"><a href="wukong_fighting_5.0_sharpened_result.png"><img style="width:2400px" src="wukong_fighting_5.0_sharpened_result.png"/></a><figcaption>α = 5.0</figcaption></figure></div></div><div id="10c412c2-dbbd-8079-93cb-e5d932ec0ecc" class="column-list"><div id="3015dc9c-2691-47ba-a8e5-4b388da0c820" style="width:50%" class="column"><figure id="9d0e3e05-8a3d-4bcb-92f3-52ed8349a65a" class="image"><a href="wukong_sky.jpg"><img style="width:1920px" src="wukong_sky.jpg"/></a><figcaption>Original photo</figcaption></figure><figure id="74ac42b6-ecb0-4ec1-b0b6-a1f24e842fd5" class="image"><a href="wukong_sky_0.75_sharpened_result.png"><img style="width:1920px" src="wukong_sky_0.75_sharpened_result.png"/></a><figcaption>α = 0.75</figcaption></figure><figure id="83ad86fc-e476-4c44-80a8-dd46ea29f649" class="image"><a href="wukong_sky_2.0_sharpened_result.png"><img style="width:1920px" src="wukong_sky_2.0_sharpened_result.png"/></a><figcaption>α = 2.0</figcaption></figure></div><div id="986c6ff8-1cc4-4f07-9443-478049dc6929" style="width:50%" class="column"><figure id="642b4499-1dc5-4241-8b12-ce96df4ad5c4" class="image"><a href="wukong_sky_0.5_sharpened_result.png"><img style="width:1920px" src="wukong_sky_0.5_sharpened_result.png"/></a><figcaption>α = 0.5</figcaption></figure><figure id="a4808276-ac05-41f0-bc9c-1a8f216640e2" class="image"><a href="wukong_sky_1.0_sharpened_result.png"><img style="width:1920px" src="wukong_sky_1.0_sharpened_result.png"/></a><figcaption>α = 1.0</figcaption></figure><figure id="36e2ebf5-7b64-4a81-9438-0c77753f86f3" class="image"><a href="wukong_sky_5.0_sharpened_result.png"><img style="width:1920px" src="wukong_sky_5.0_sharpened_result.png"/></a><figcaption>α = 5.0</figcaption></figure></div></div><div id="10c412c2-dbbd-8059-a824-c3306784cf62" class="column-list"><div id="bb15a6e6-b2a3-4514-bfe9-486a89a177de" style="width:50%" class="column"><figure id="0be1bed3-4c65-4741-aee6-58b2fea5e7ad" class="image"><a href="nature.jpg"><img style="width:331px" src="nature.jpg"/></a><figcaption>Original photo</figcaption></figure><figure id="dbb962fe-b7aa-4aa7-a1c5-bb180aa6af16" class="image"><a href="nature_blurred_0.5_sharpened_result.png"><img style="width:331px" src="nature_blurred_0.5_sharpened_result.png"/></a><figcaption>α = 0.5</figcaption></figure><figure id="19f5c76c-93df-4d79-8b4c-0ac895f156d2" class="image"><a href="nature_blurred_1.0_sharpened_result.png"><img style="width:331px" src="nature_blurred_1.0_sharpened_result.png"/></a><figcaption>α = 1.0</figcaption></figure></div><div id="55447bba-d898-451c-8096-f33155fc5b4c" style="width:50%" class="column"><figure id="fb9536eb-8442-4e9f-99a3-557e70b19694" class="image"><a href="nature_blurred.jpg"><img style="width:331px" src="nature_blurred.jpg"/></a><figcaption>Original photo blurred</figcaption></figure><figure id="c0479476-8bfe-4fd6-b9e6-54742e031f06" class="image"><a href="nature_0.75_sharpened_result.png"><img style="width:331px" src="nature_0.75_sharpened_result.png"/></a><figcaption>α = 0.75</figcaption></figure><figure id="6fde0d2d-cbe3-432b-a459-63759ea638b3" class="image"><a href="nature_blurred_2.0_sharpened_result.png"><img style="width:331px" src="nature_blurred_2.0_sharpened_result.png"/></a><figcaption>α = 2.0</figcaption></figure></div></div><p id="10c412c2-dbbd-80e5-813c-dd10b073aa2a" class="">When we blurred our photo of nature and resharpened it, it seems similar to the original. However, the blurring made us lose some information which couldn’t be reattained with our sharpening, and so the result isn’t the complete same as the original — this results in a still slightly blurry look.</p><p id="10d412c2-dbbd-8097-ad30-fcbcbecd7ac0" class="">For visualization purposes, here are the high frequencies for our images:</p><figure id="10d412c2-dbbd-802b-a207-ec85ae79183c" class="image"><a href="taj_mask.png"><img style="width:300px" src="taj_mask.png"/></a></figure><figure id="10d412c2-dbbd-80ba-916a-c705ba41d947" class="image"><a href="wukong_fighting_mask.png"><img style="width:2400px" src="wukong_fighting_mask.png"/></a></figure><figure id="10d412c2-dbbd-8009-a4ff-e41b3cbcdc72" class="image"><a href="wukong_sky_mask.png"><img style="width:708px" src="wukong_sky_mask.png"/></a></figure><figure id="10d412c2-dbbd-8008-a4fd-fb85797e6aa5" class="image"><a href="nature_blurred_mask.png"><img style="width:708px" src="nature_blurred_mask.png"/></a></figure><hr id="10c412c2-dbbd-809c-8ee8-ff5aef6480ed"/><h2 id="10c412c2-dbbd-80f3-9324-ea0594113692" class="">Hybrid Images</h2><p id="10c412c2-dbbd-8029-b1e4-d37f8110714e" class="">To generate hybrid images, we use the Gaussian filter as a low-pass filter again. Taking in two images, we first align the two to ensure that they are lined up well for “merging.” Next, we take the low frequencies of one image, the high frequencies of the other image, and then we add them together. The result is our hybrid image, where if we’re close to the image, we see the photo of which we have the high frequencies; if we’re far away, we see the photo of which we have the low frequencies.</p><p id="10d412c2-dbbd-807e-9d86-fa40e182c470" class="">Below are some of our results; the left image is the image which we take the low frequencies of, the middle one is the image which we take the high frequencies of, and the right image is the result.</p><div id="10d412c2-dbbd-8080-9e1a-d61af3e3db43" class="column-list"><div id="10d412c2-dbbd-80ce-bff1-ce36599c02db" style="width:33.333333333333336%" class="column"><figure id="10d412c2-dbbd-80a5-9745-cba8d9e27d3c" class="image"><a href="DerekPicture.jpg"><img style="width:707.9874877929688px" src="DerekPicture.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="10d412c2-dbbd-8089-8ed7-d3859df6f07e" style="width:33.333333333333336%" class="column"><figure id="10d412c2-dbbd-80a0-a8d7-e2e8f2623d6c" class="image"><a href="nutmeg.jpg"><img style="width:708px" src="nutmeg.jpg"/></a><figcaption>High-pass</figcaption></figure></div><div id="10d412c2-dbbd-8053-a244-d2dbaa2227fd" style="width:33.33333333333333%" class="column"><figure id="10d412c2-dbbd-80ef-bb27-f09f08ae10a7" class="image"><a href="hybridized_derek_nutmeg_result.png"><img style="width:205.3125px" src="hybridized_derek_nutmeg_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-8099-9569-fb9f0d588f7f" class="column-list"><div id="955445c9-3bf9-4c66-888d-8d2511fe1888" style="width:33.333333333333336%" class="column"><figure id="c613fd3c-4906-485e-8cc4-a5c3c9ee4b1e" class="image"><a href="speech_bubble_meme.png"><img style="width:205.3125px" src="speech_bubble_meme.png"/></a><figcaption>Low-pass</figcaption></figure></div><div id="75aa8be1-66a3-40b1-af26-c2e84e3310cc" style="width:33.333333333333336%" class="column"><figure id="9de137eb-b700-4501-b567-a995730f767f" class="image"><a href="speech_bubble_wallace.png"><img style="width:525px" src="speech_bubble_wallace.png"/></a><figcaption>High-pass</figcaption></figure></div><div id="2cc777fe-07f8-47d8-8a9f-f1f89db95f41" style="width:33.33333333333333%" class="column"><figure id="4f5bd0c0-ab98-4518-9b52-a7b2b6eb51b2" class="image"><a href="hybridized_bubble_wallace_result.png"><img style="width:205.3125px" src="hybridized_bubble_wallace_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-8034-a76d-e0536fc74177" class="column-list"><div id="5e9e6b1d-eca4-4b61-99fd-6551ab61c8d2" style="width:33.333333333333336%" class="column"><figure id="19c94915-9a65-49ac-9df5-e195df3d468f" class="image"><a href="moop_fortnite.jpg"><img style="width:3024px" src="moop_fortnite.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="ea98ef81-e3c2-47a1-b62c-4c3f73190be2" style="width:33.333333333333336%" class="column"><figure id="fd6d3ad1-fede-4f98-b940-59d3c1651db5" class="image"><a href="fortnite.jpg"><img style="width:1200px" src="fortnite.jpg"/></a><figcaption>High-pass</figcaption></figure></div><div id="1a03fbcc-c2f9-4800-9800-897a41590786" style="width:33.33333333333333%" class="column"><figure id="e3541743-bc24-4158-b0a3-b2de744d79bc" class="image"><a href="hybridized_moop_fortnite_result.png"><img style="width:610px" src="hybridized_moop_fortnite_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-804b-add1-dbef94f21d5c" class="column-list"><div id="b98a1735-9bd7-4a59-8780-c4fa7ad3dfda" style="width:33.333333333333336%" class="column"><figure id="52ccbdc5-9da7-4192-8625-e21fa8a55195" class="image"><a href="christina_snow_white.jpg"><img style="width:1536px" src="christina_snow_white.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="7f4962e1-ea27-490c-9313-5cf75f3583d8" style="width:33.333333333333336%" class="column"><figure id="a1fd9642-5746-47be-8507-888af83be06b" class="image"><a href="snow_white.png"><img style="width:1024px" src="snow_white.png"/></a><figcaption>High-pass</figcaption></figure></div><div id="6ef60f2e-d880-4a4c-99dc-27a1ace54cfd" style="width:33.33333333333333%" class="column"><figure id="5520ceb2-1834-4233-81a0-df6300f254a8" class="image"><a href="hybridized_christina_snow_white_result.png"><img style="width:901px" src="hybridized_christina_snow_white_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-80ee-bdfa-eb2e74618a7f" class="column-list"><div id="c380ed5a-57c1-4dad-a21a-f930f10f9676" style="width:33.333333333333336%" class="column"><figure id="3080e3d5-f304-4155-b225-3f82ee1d8279" class="image"><a href="erlang_standing.png"><img style="width:887px" src="erlang_standing.png"/></a><figcaption>Low-pass</figcaption></figure></div><div id="9362f500-a255-4c95-bd85-208e1d3a74eb" style="width:33.333333333333336%" class="column"><figure id="55fd7bb2-fff2-4c5d-9029-c734b0d642ea" class="image"><a href="wukong_standing.png"><img style="width:895px" src="wukong_standing.png"/></a><figcaption>High-pass</figcaption></figure></div><div id="7dadb5c3-3986-4a18-8334-8153c2749323" style="width:33.33333333333333%" class="column"><figure id="fc0fa791-6809-4c3b-bcee-992cc7392a46" class="image"><a href="hybridized_erlang_wukong_result.png"><img style="width:623px" src="hybridized_erlang_wukong_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-80d5-ace4-ea789a0c80ef" class="column-list"><div id="0e4b6205-f2d4-42fb-8a39-67fb925de872" style="width:33.333333333333336%" class="column"><figure id="5cd84231-c6d0-485d-a11d-e5a22946d5dc" class="image"><a href="euhan.jpg"><img style="width:1080px" src="euhan.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="06938769-e0fc-4fe6-a918-ef0daa13021f" style="width:33.333333333333336%" class="column"><figure id="d0c7f238-2232-442f-8a95-fdaf4d5139e2" class="image"><a href="minjune.jpg"><img style="width:946px" src="minjune.jpg"/></a><figcaption>High-pass</figcaption></figure></div><div id="8191726d-c045-4957-a86b-7db84a671216" style="width:33.33333333333333%" class="column"><figure id="1703709b-72ea-46a2-a17a-0583d266945b" class="image"><a href="hybridized_euhan_minjune_result.png"><img style="width:1011px" src="hybridized_euhan_minjune_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-808f-804f-cc458c68846e" class="column-list"><div id="cbf29549-7adc-4fa9-8332-431ba9b1cbaa" style="width:33.333333333333336%" class="column"><figure id="ca5ce1b8-52dd-43db-bcf6-9fac38679d72" class="image"><a href="batman.jpg"><img style="width:536px" src="batman.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="e73ab2fc-8ca8-419c-ae7c-badef665b5ac" style="width:33.333333333333336%" class="column"><figure id="70f10d89-e3a0-4484-a44a-ea349edf9f24" class="image"><a href="bruce_wayne.jpg"><img style="width:205.3249969482422px" src="bruce_wayne.jpg"/></a><figcaption>High-pass</figcaption></figure></div><div id="3e66030d-cdd7-437b-9b15-a44de92a84a8" style="width:33.33333333333333%" class="column"><figure id="a0faf779-f80c-416d-b61f-26fa41c645fe" class="image"><a href="hybridized_batman_bruce_wayne_result.png"><img style="width:136px" src="hybridized_batman_bruce_wayne_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><div id="10d412c2-dbbd-80a4-8e57-db28ce909f76" class="column-list"><div id="c64d379e-a8b3-4965-86f0-e25a38ed95f1" style="width:33.333333333333336%" class="column"><figure id="e5d42d37-e947-4008-bb9b-df3b27713d4d" class="image"><a href="victor_phoenix.jpg"><img style="width:1080px" src="victor_phoenix.jpg"/></a><figcaption>Low-pass</figcaption></figure></div><div id="01c8e4a0-b2bb-4164-a49d-1e4ec6004803" style="width:33.333333333333336%" class="column"><figure id="93d84c86-27aa-425d-a5a8-193e0fe4899b" class="image"><a href="phoenix.jpg"><img style="width:681px" src="phoenix.jpg"/></a><figcaption>High-pass</figcaption></figure></div><div id="21f639ef-e364-4c82-8813-d3a729a41171" style="width:33.33333333333333%" class="column"><figure id="93e3c09c-abcb-4bad-b90d-9906b0e099f0" class="image"><a href="hybridized_victor_phoenix_result.png"><img style="width:732px" src="hybridized_victor_phoenix_result.png"/></a><figcaption>Hybridized result</figcaption></figure></div></div><p id="10c412c2-dbbd-8015-a477-c3af5bb3a027" class="">Let us further examine this last result. Below is the log magnitude of the Fourier transform of the input images, filtered version of these images, and the final result.</p><div id="10d412c2-dbbd-807b-a363-deda690ccb63" class="column-list"><div id="10d412c2-dbbd-8065-9d51-c100c88349fc" style="width:50%" class="column"><figure id="10d412c2-dbbd-807f-9942-ff112ed02d1a" class="image"><a href="img1FT.png"><img style="width:330.9875183105469px" src="img1FT.png"/></a><figcaption>Original low-pass image</figcaption></figure></div><div id="10d412c2-dbbd-8030-a78b-c51616cb00b7" style="width:50%" class="column"><figure id="10d412c2-dbbd-8051-a24c-f126b62de7b4" class="image"><a href="img2FT.png"><img style="width:330.9875183105469px" src="img2FT.png"/></a><figcaption>Original high-pass image</figcaption></figure></div></div><div id="10d412c2-dbbd-8032-a554-d71a68052a2a" class="column-list"><div id="10d412c2-dbbd-805b-9b07-ed32c6990e6a" style="width:50%" class="column"><figure id="10d412c2-dbbd-80aa-a71e-eff763aef833" class="image"><a href="img1FilterFT.png"><img style="width:330.9875183105469px" src="img1FilterFT.png"/></a><figcaption>Filtered low-pass image</figcaption></figure></div><div id="10d412c2-dbbd-8037-bc51-d1c7718ef689" style="width:50%" class="column"><figure id="10d412c2-dbbd-80aa-b834-fb216388f178" class="image"><a href="img2FilterFT.png"><img style="width:330.9875183105469px" src="img2FilterFT.png"/></a><figcaption>Filtered high-pass image</figcaption></figure></div></div><figure id="10d412c2-dbbd-8022-bc2d-edb374cead5a" class="image"><a href="resultFT.png"><img style="width:356px" src="resultFT.png"/></a><figcaption>Hybridized result</figcaption></figure><p id="10c412c2-dbbd-8000-b56f-d7335ce94611" class="">If we examine the hybridized image of Erlang and Wukong, it seems to be a bit of a failure. It is difficult to make out both images without seeing a bit of the other one, making it hard to parse the frequencies apart from each other.</p><figure id="10d412c2-dbbd-8002-ad4e-c898924d88c0" class="image"><a href="hybridized_erlang_wukong_result%201.png"><img style="width:384px" src="hybridized_erlang_wukong_result%201.png"/></a><figcaption>Failed hybridization of Erlang and Wukong</figcaption></figure><h2 id="10d412c2-dbbd-803b-986a-e26ff9acaa29" class="">Gaussian and Laplacian Stacks</h2><p id="10d412c2-dbbd-803b-9b71-f23364b3a6c1" class="">To create our multiresolution blending, we first have to create Gaussian and Laplacian stacks for images. The Gaussian stack is defined such that the 0th element is the original image, and then each subsequent ith element is the result of the Gaussian filter applied on the (i-1)th element. Our Laplacian stack is defined such that for a Gaussian stack of length n, our Laplacian stack’s ith element for i in [0, n-2] is equal to Gaussian[i] - Gaussian[i + 1]. At the end of our Laplacian stack, we append the last element of our Gaussian stack; this ensures the two stacks are the same length. For this project, I made the stacks to be of length 8. Consider the following two images:</p><div id="10d412c2-dbbd-804b-9601-efe2cf22cd7b" class="column-list"><div id="10d412c2-dbbd-801d-8dd6-c989a410c466" style="width:50%" class="column"><figure id="10d412c2-dbbd-8055-a547-e0ee79842416" class="image"><a href="apple.jpeg"><img style="width:300px" src="apple.jpeg"/></a></figure></div><div id="10d412c2-dbbd-80d5-b19c-d49818784a9d" style="width:50%" class="column"><figure id="10d412c2-dbbd-8065-9e01-d2259f303f6c" class="image"><a href="orange.jpeg"><img style="width:300px" src="orange.jpeg"/></a></figure></div></div><p id="10d412c2-dbbd-8004-abe1-c4a6a7e2b4b4" class="">Below are the results in the Laplacian stack for the two images at the chosen levels of 0, 2, 4, and 7:</p><div id="10d412c2-dbbd-80f9-bf66-e9afe38edcd2" class="column-list"><div id="10d412c2-dbbd-80a3-88f7-fa44cee90124" style="width:50%" class="column"><figure id="10d412c2-dbbd-8084-8ec6-d9cd1cf5e421" class="image"><a href="apple_laplacian_0.png"><img style="width:300px" src="apple_laplacian_0.png"/></a></figure></div><div id="10d412c2-dbbd-80c7-8036-e8fa2c222664" style="width:50%" class="column"><figure id="10d412c2-dbbd-809e-a118-e2cb06f50cf5" class="image"><a href="orange_laplacian_0.png"><img style="width:300px" src="orange_laplacian_0.png"/></a></figure></div></div><div id="10d412c2-dbbd-805d-b382-e8248cb13cee" class="column-list"><div id="b2209c64-c33e-4101-b1ac-cb6182067fae" style="width:50%" class="column"><figure id="7d47a45d-21a7-4915-9c14-7a82e846ac18" class="image"><a href="apple_laplacian_2.png"><img style="width:300px" src="apple_laplacian_2.png"/></a></figure></div><div id="bb2c77e4-820a-4dbf-a7ed-c9789222a900" style="width:50%" class="column"><figure id="e74f9277-29fc-4ad2-971b-a3ce6a0f23ee" class="image"><a href="orange_laplacian_2.png"><img style="width:300px" src="orange_laplacian_2.png"/></a></figure></div></div><div id="10d412c2-dbbd-80ae-b846-c6151a2c8954" class="column-list"><div id="9763b81e-f8be-452b-a58b-1a71e830b5b4" style="width:50%" class="column"><figure id="6a73b434-4a27-449d-addb-23f1abaf2046" class="image"><a href="apple_laplacian_4.png"><img style="width:300px" src="apple_laplacian_4.png"/></a></figure></div><div id="00efe6b1-930b-4107-861e-02ebc0f3ae43" style="width:50%" class="column"><figure id="e9916a8d-de4a-408d-918b-ca3d3f05761c" class="image"><a href="orange_laplacian_4.png"><img style="width:300px" src="orange_laplacian_4.png"/></a></figure></div></div><div id="10d412c2-dbbd-8062-ab1a-cbb9a207974a" class="column-list"><div id="e79bc9f6-c5ec-4b28-a25a-499e6d48a3a9" style="width:50%" class="column"><figure id="ac3bac70-2469-49ed-aedb-bcc4bf33e7e0" class="image"><a href="apple_laplacian_7.png"><img style="width:300px" src="apple_laplacian_7.png"/></a></figure></div><div id="7e80e584-3c8e-430e-bd30-5465ebead690" style="width:50%" class="column"><figure id="008188e7-e05f-4767-9a8c-3ff015affcdf" class="image"><a href="orange_laplacian_7.png"><img style="width:300px" src="orange_laplacian_7.png"/></a></figure></div></div><hr id="10d412c2-dbbd-8031-adb6-cf76192492c0"/><h2 id="10d412c2-dbbd-8020-940c-fb6dfc2e8b65" class="">Multiresolution Blending</h2><p id="10d412c2-dbbd-800c-9699-c8bd72de9ab9" class="">Having created our Laplacian stacks for our images, we now choose a mask that allows us to create a blending. Our mask should generate the boundaries upon which we choose to blend the photos. In the case of the “oraple” (orange + apple), we want the left half to be the apple and the right half to be the orange. The corresponding mask for this would be an image with all white on the left half and all black on the right half.</p><p id="10d412c2-dbbd-80a6-be76-f3b416c24920" class="">Similar to what we did for our selected images, we also have to generate a Gaussian stack for our mask. Once we have our mask’s Gaussian stack, we can generate the resulting blended image’s stack like so:</p><figure id="10d412c2-dbbd-80f2-8c5e-db6e0b147862" class="equation"><style>@import url('https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>resultImageStack</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>=</mo><mtext>maskGaussian</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>⋅</mo><mtext>firstImageLaplacian</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mspace linebreak="newline"></mspace><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mtext>maskGaussian</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo stretchy="false">)</mo><mo>⋅</mo><mtext>secondImageLaplacian</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\text{resultImageStack}[i] = \text{maskGaussian}[i] \cdot \text{firstImageLaplacian}[i] \newline + (1 - \text{maskGaussian}[i]) \cdot \text{secondImageLaplacian}[i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">resultImageStack</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">maskGaussian</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">firstImageLaplacian</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">+</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">maskGaussian</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">])</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">secondImageLaplacian</span></span><span class="mopen">[</span><span class="mord mathnormal">i</span><span class="mclose">]</span></span></span></span></span></div></figure><p id="10d412c2-dbbd-80b1-9b1b-cd9a58d5f2ed" class="">Using our mask, we get the following oraple:</p><div id="10d412c2-dbbd-80a8-a5b3-d3f2c60f7bc6" class="column-list"><div id="10d412c2-dbbd-804f-8a9c-e49b1f8c7638" style="width:50%" class="column"><figure id="10d412c2-dbbd-808b-b52f-fd0e143cff43" class="image"><a href="maskVerticalLine.jpg"><img style="width:300px" src="maskVerticalLine.jpg"/></a><figcaption>Mask</figcaption></figure></div><div id="10d412c2-dbbd-807e-94f1-f5c1753a4576" style="width:50%" class="column"><figure id="10d412c2-dbbd-8070-8071-d9dbeb4782e4" class="image"><a href="oraple.png"><img style="width:300px" src="oraple.png"/></a><figcaption>Oraple</figcaption></figure></div></div><p id="10d412c2-dbbd-80c7-acb6-cb500cd7302a" class="">By using the mask, we can also generate the following results:</p><div id="10d412c2-dbbd-8054-8322-ce4782e342ff" class="column-list"><div id="10d412c2-dbbd-80eb-b7bd-db17a773353a" style="width:33.333333333333336%" class="column"><figure id="10d412c2-dbbd-80fb-9aca-f01558cd937f" class="image"><a href="bronny.png"><img style="width:200px" src="bronny.png"/></a><figcaption>Image 1</figcaption></figure></div><div id="10d412c2-dbbd-803b-b5e6-ea6467ef516d" style="width:33.333333333333336%" class="column"><figure id="10d412c2-dbbd-8082-8872-f7f7f68d66fa" class="image"><a href="boruto.jpg"><img style="width:200px" src="boruto.jpg"/></a><figcaption>Image 2</figcaption></figure></div><div id="10d412c2-dbbd-8029-817d-e3545b133e7d" style="width:33.33333333333333%" class="column"><figure id="10d412c2-dbbd-803c-a239-ea252789b3ca" class="image"><a href="blendedBorutoBronny.jpg"><img style="width:200px" src="blendedBorutoBronny.jpg"/></a><figcaption>Blended result</figcaption></figure></div></div><div id="10d412c2-dbbd-8065-8bc3-cc1e959bee9a" class="column-list"><div id="11f859cf-7fb4-4d7e-b614-8bbae8b6ea56" style="width:33.333333333333336%" class="column"><figure id="36e81f99-ee04-4551-a40c-d725c2f34d67" class="image"><a href="zaid.jpg"><img style="width:200px" src="zaid.jpg"/></a><figcaption>Image 1</figcaption></figure></div><div id="74cd1f80-6fa0-4ac0-a2cf-f06290579130" style="width:33.333333333333336%" class="column"><figure id="f582dc98-9d68-4340-a568-ae37729c543a" class="image"><a href="L.png"><img style="width:200px" src="L.png"/></a><figcaption>Image 2</figcaption></figure></div><div id="1b6e094b-4489-48a3-9f24-c36295c42f5d" style="width:33.33333333333333%" class="column"><figure id="45498181-3599-4790-ad67-540c3b96ac37" class="image"><a href="blendedZaidL.jpg"><img style="width:200px" src="blendedZaidL.jpg"/></a><figcaption>Blended result</figcaption></figure></div></div><p id="10d412c2-dbbd-8049-88c0-d06adca5a797" class="">For the blend of Bronny and Boruto, here are the results from the stack at the chosen levels 0, 2, 4, and 7:</p><div id="10d412c2-dbbd-8089-a169-fb2db9d5d7b1" class="column-list"><div id="10d412c2-dbbd-80c1-94cc-fbc900f6ab57" style="width:25%" class="column"><figure id="10d412c2-dbbd-800c-9816-c83cf5488a83" class="image"><a href="bronnyBorutoStack0.png"><img style="width:330.9875183105469px" src="bronnyBorutoStack0.png"/></a><figcaption>0</figcaption></figure></div><div id="10d412c2-dbbd-80d4-9780-c5c40457e212" style="width:25%" class="column"><figure id="10d412c2-dbbd-80ca-aa28-ebfde8d04068" class="image"><a href="bronnyBorutoStack2.png"><img style="width:330.9875183105469px" src="bronnyBorutoStack2.png"/></a><figcaption>2</figcaption></figure></div><div id="10d412c2-dbbd-80a7-9ea4-d56129f02420" style="width:25%" class="column"><figure id="10d412c2-dbbd-80e0-87dc-e2c11e37cedd" class="image"><a href="bronnyBorutoStack4.png"><img style="width:205.3125px" src="bronnyBorutoStack4.png"/></a><figcaption>4</figcaption></figure></div><div id="10d412c2-dbbd-8062-9726-f0ad7d0ca487" style="width:25%" class="column"><figure id="10d412c2-dbbd-8044-be97-f752b515338d" class="image"><a href="bronnyBorutoStack7.png"><img style="width:142.4875030517578px" src="bronnyBorutoStack7.png"/></a><figcaption>7</figcaption></figure></div></div><p id="10d412c2-dbbd-80ac-af3b-e5f8a5fa9437" class="">We can also utilize a custom mask to make a beautiful even more gorgeous by placing a Costco in it:</p><div id="10d412c2-dbbd-80f1-8128-d3ec9488c0de" class="column-list"><div id="545cc830-a62a-4a09-ac67-4c6727a96228" style="width:49.99999999999999%" class="column"><figure id="7dadca79-4949-4527-ab32-0596b6e44a2a" class="image"><a href="costco.jpg"><img style="width:364px" src="costco.jpg"/></a><figcaption>Image 1</figcaption></figure></div><div id="1fa45919-2efd-423a-9536-5086f4bf6fdc" style="width:49.99999999999999%" class="column"><figure id="176f4b93-2f20-4f46-993b-18fb64bcc16a" class="image"><a href="meadow.jpg"><img style="width:364px" src="meadow.jpg"/></a><figcaption>Image 2</figcaption></figure></div></div><div id="10d412c2-dbbd-8024-8b18-db80fcbff24c" class="column-list"><div id="10d412c2-dbbd-80fa-8740-c977d6cb02ee" style="width:50%" class="column"><figure id="10d412c2-dbbd-8046-9bb0-fc3ddf55263d" class="image"><a href="maskCostco.png"><img style="width:330.9875183105469px" src="maskCostco.png"/></a><figcaption>Mask</figcaption></figure></div><div id="10d412c2-dbbd-80b1-9593-f85ad883e220" style="width:50%" class="column"><figure id="8e77935b-35a5-42bc-a24f-e219e4d93af9" class="image"><a href="blendedCostcoMeadow.jpg"><img style="width:330.9875183105469px" src="blendedCostcoMeadow.jpg"/></a><figcaption>Blended result</figcaption></figure></div></div><hr id="10d412c2-dbbd-80a9-b5d9-e94b1e2991d3"/><h2 id="10d412c2-dbbd-8007-947a-d5194b9ce886" class="">Conclusion</h2><p id="10d412c2-dbbd-800d-83c9-de252c6027ff" class="">This project taught me about how low and high frequencies are perceived by the human eye, and I learned how to manipulate the two using low-pass and high-pass filters to alter how we process images. I also now know how to create tools that allow the endless generation of memes!</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
